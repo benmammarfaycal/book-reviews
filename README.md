@@ -19,7 +19,7 @@ Each book is visually styled according to its category using unique icons and co
 - **Version Control:** Git & GitHub
 
 ## 📁 Project Structure (simplified)
-
+````
 projectreviews/
 │
 ├── manage.py
@@ -27,7 +27,7 @@ projectreviews/
 │
 ├── book/ # Handles categories & books & reviews 
 ├── contact/ # Contact form pages
-
+````
 bash
 Copier le code
 
