@@ -2,11 +2,30 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from .forms import AddReviewsForm, AddBooksForm
 from .models import Category,Book,Reviews
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+
+
+
 # Create your views here.
 
 def index_views(request):
     last_reviews = Reviews.objects.order_by('-date_reviews')[:15]
-    return render(request, 'book/index.html', {'last_reviews': last_reviews})
+
+    # Ajouter les statistiques
+    total_books = Book.objects.count()
+    total_categories = Category.objects.count()
+    total_reviews = Reviews.objects.count()
+    total_users = User.objects.count()
+
+    context = {
+        'last_reviews': last_reviews,
+        'total_books': total_books,
+        'total_categories': total_categories,
+        'total_reviews': total_reviews,
+        'total_users': total_users,
+    }
+    return render(request, 'book/index.html', context)
 
 
 def categories_views(request):
@@ -46,3 +65,10 @@ def add_books_form(request):
     return render(request,'book/add_book_form.html',{'form':form})
 
 
+def category_infos(request, category_id):
+    category = get_object_or_404(Category, id=category_id)
+    return render(request, 'book/category_infos.html', {'category': category})
+
+def book_infos(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+    return render(request, 'book/book_infos.html', {'book': book})

@@ -2,14 +2,67 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Main</title>
+    <title>BookStore - Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+     <link rel="stylesheet" href="{% static 'book/style.css' %}">
+    <style>
+        .hero-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 4rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+            color: white;
+        }
+        .hero-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+        }
+        .review-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #667eea;
+        }
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+        }
+        .action-buttons .btn {
+            transition: all 0.3s ease;
+        }
+        .action-buttons .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #6c757d;
+        }
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-light">
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="{% url 'book:index' %}">Logo</a>
+        <a class="navbar-brand fw-bold" href="{% url 'book:index' %}">
+            <i class="bi bi-book-half"></i> BookStore
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -18,59 +71,244 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'book:books' %}">Books</a>
+                    <a class="nav-link active" href="{% url 'book:index' %}">
+                        <i class="bi bi-house"></i> Main
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'book:categories' %}">Categories</a>
+                    <a class="nav-link" href="{% url 'book:books' %}">
+                        <i class="bi bi-book"></i> Books
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'contact:index' %}">Contact Me</a>
+                    <a class="nav-link" href="{% url 'book:categories' %}">
+                        <i class="bi bi-tags"></i> Categories
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact:index' %}">
+                        <i class="bi bi-envelope"></i> Contact Me
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 
-<div class="container py-5">
-    <div class="row mb-3 justify-content-center">
-    <div class="col-2">
-        <a href="{% url 'book:add_review' %}" class="btn btn-primary w-100">Add a review</a>
-    </div>
-    <div class="col-2">
-        <a href="{% url 'book:add_book' %}" class="btn btn-primary w-100">Add a book</a>
+<!-- Hero Header -->
+<div class="hero-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+                <i class="bi bi-house-heart hero-icon"></i>
+            </div>
+            <div class="col-md-10">
+                <h1 class="display-4 fw-bold">Welcome to BookStore</h1>
+                <p class="lead mb-0">Discover, share, and explore amazing books with our community</p>
+            </div>
+        </div>
     </div>
 </div>
 
-    <h1 class="mb-4 text-center">Latest Reviews</h1>
+<div class="container">
+    <!-- Quick Actions -->
+    <div class="row mb-5 action-buttons">
+        <div class="col-12 text-center">
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'book:add_review' %}" class="btn btn-primary btn-lg px-4">
+                    <i class="bi bi-chat-text"></i> Add a Review
+                </a>
+                <a href="{% url 'book:add_book' %}" class="btn btn-success btn-lg px-4">
+                    <i class="bi bi-plus-circle"></i> Add a Book
+                </a>
+                <a href="{% url 'book:books' %}" class="btn btn-outline-primary btn-lg px-4">
+                    <i class="bi bi-books"></i> Browse Books
+                </a>
+            </div>
+        </div>
+    </div>
 
-    {% if last_reviews %}
-    {% for review in last_reviews %}
-    <div class="row align-items-center g-2 mb-3">
+    <!-- Stats Section -->
+    <div class="row mb-5">
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-book fs-1 mb-2"></i>
+                    <h3 class="card-title">{{ total_books }}</h3>
+                    <p class="card-text mb-0">Total Books</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-tags fs-1 mb-2"></i>
+                    <h3 class="card-title">{{ total_categories }}</h3>
+                    <p class="card-text mb-0">Categories</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-chat-quote fs-1 mb-2"></i>
+                    <h3 class="card-title">{{ total_reviews }}</h3>
+                    <p class="card-text mb-0">Reviews</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card stats-card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="bi bi-people fs-1 mb-2"></i>
+                    <h3 class="card-title">{{ total_users }}</h3>
+                    <p class="card-text mb-0">Community</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Latest Reviews Section -->
+    <div class="row">
         <div class="col-12">
-            <div class="card p-3" style="background-color:#d1e7dd;">
-                <div class="d-flex align-items-center">
-                    <i class="bi bi-chat-left-text fs-2 me-3 text-success"></i>
-                    <div>
-                        <h5 class="card-title">{{ review.book.title }} by {{ review.book.author }}</h5>
-                        <p class="card-text">{{ review.reviews }}</p>
-                        <small class="text-muted">
-                            Posted by
-                            {% if review.posted_by %}{{ review.posted_by.username }}{% else %}Anonymous{% endif %}
-                            on {{ review.date_reviews|date:"F j, Y, H:i" }}
-                        </small>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h3">
+                    <i class="bi bi-chat-heart"></i> Latest Reviews
+                    <span class="badge bg-primary">{{ last_reviews|length }}</span>
+                </h2>
+                <a href="{% url 'book:add_review' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-plus-circle"></i> Add Review
+                </a>
+            </div>
+
+            {% if last_reviews %}
+            <div class="row g-4">
+                {% for review in last_reviews %}
+                <div class="col-lg-6">
+                    <div class="card review-card shadow-sm h-100">
+                        <div class="card-body">
+                            <!-- Book Info -->
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="flex-shrink-0">
+                                    <div class="feature-icon">
+                                        <i class="bi {{ review.book.icon }}"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h5 class="card-title mb-1">
+                                        <a href="{% url 'book:book_infos' review.book.id %}"
+                                           class="text-decoration-none text-dark">
+                                            {{ review.book.title }}
+                                        </a>
+                                    </h5>
+                                    <p class="card-text text-muted mb-0">
+                                        <i class="bi bi-person"></i> by {{ review.book.author }}
+                                    </p>
+                                    <span class="badge" style="background-color: {{ review.book.color }}; color: white;">
+                                        {{ review.book.category.name }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Review Content -->
+                            <p class="card-text mb-3">{{ review.reviews|truncatewords:30 }}</p>
+
+                            <!-- Review Meta -->
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="bi bi-person-circle"></i>
+                                    {% if review.posted_by %}
+                                        {{ review.posted_by.username }}
+                                    {% else %}
+                                        Anonymous
+                                    {% endif %}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i>
+                                    {{ review.date_reviews|date:"M j, Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Empty Reviews State -->
+            <div class="empty-state">
+                <i class="bi bi-chat-square-text" style="font-size: 4rem;"></i>
+                <h3>No Reviews Yet</h3>
+                <p class="lead mb-4">Be the first to share your thoughts about our books!</p>
+                <a href="{% url 'book:add_review' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> Write First Review
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light border-0">
+                <div class="card-body text-center py-5">
+                    <h2 class="card-title mb-4">
+                        <i class="bi bi-stars"></i> Why Choose BookStore?
+                    </h2>
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-search fs-4"></i>
+                            </div>
+                            <h5>Discover Books</h5>
+                            <p class="text-muted">Find your next favorite read from our curated collection</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-chat-dots fs-4"></i>
+                            </div>
+                            <h5>Share Reviews</h5>
+                            <p class="text-muted">Share your thoughts and help others discover great books</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="feature-icon">
+                                <i class="bi bi-people fs-4"></i>
+                            </div>
+                            <h5>Join Community</h5>
+                            <p class="text-muted">Connect with fellow book lovers and share recommendations</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {% endfor %}
-    {% else %}
-    <p class="text-center text-muted fs-5">There are no reviews for the moment.</p>
-    {% endif %}
-
+    <!-- Back to Top Button -->
+    <div class="text-center mt-5">
+        <a href="#" class="btn btn-outline-secondary" id="backToTop">
+            <i class="bi bi-arrow-up"></i> Back to Top
+        </a>
+    </div>
 </div>
 
+<!-- Footer -->
+<footer class="bg-light mt-5 py-4">
+    <div class="container text-center">
+        <p class="text-muted mb-0">
+            &copy; 2024 BookStore.
+            <span class="text-primary">{{ total_books }}</span> books,
+            <span class="text-success">{{ total_reviews }}</span> reviews,
+            and counting!
+        </p>
+    </div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Back to top functionality
+    document.getElementById('backToTop').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+</script>
 </body>
 </html>
