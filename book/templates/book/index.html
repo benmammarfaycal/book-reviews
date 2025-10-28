@@ -8,55 +8,64 @@
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-  <div class="container">
-    <a class="navbar-brand fw-bold" href="{% url 'book:index' %}">Logo</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'book:index' %}">Logo</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'book:books' %}">Books</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'book:categories' %}">Categories</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'contact:index' %}">Contact Me</a>
-        </li>
-      </ul>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'book:books' %}">Books</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'book:categories' %}">Categories</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact:index' %}">Contact Me</a>
+                </li>
+            </ul>
+        </div>
     </div>
-  </div>
 </nav>
 
 <div class="container py-5">
+    <div class="row mb-3 justify-content-center">
+    <div class="col-2">
+        <a href="{% url 'book:add_review' %}" class="btn btn-primary w-100">Add a review</a>
+    </div>
+    <div class="col-2">
+        <a href="{% url 'book:add_book' %}" class="btn btn-primary w-100">Add a book</a>
+    </div>
+</div>
+
     <h1 class="mb-4 text-center">Latest Reviews</h1>
 
     {% if last_reviews %}
-        {% for review in last_reviews %}
-            <div class="row align-items-center g-2 mb-3">
-                <div class="col-12">
-                    <div class="card p-3" style="background-color:#d1e7dd;">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-chat-left-text fs-2 me-3 text-success"></i>
-                            <div>
-                                <h5 class="card-title">{{ review.book.title }} by {{ review.book.author }}</h5>
-                                <p class="card-text">{{ review.reviews }}</p>
-                                <small class="text-muted">
-                                    Posted by
-                                    {% if review.posted_by %}{{ review.posted_by.username }}{% else %}Anonymous{% endif %}
-                                    on {{ review.date_reviews|date:"F j, Y, H:i" }}
-                                </small>
-                            </div>
-                        </div>
+    {% for review in last_reviews %}
+    <div class="row align-items-center g-2 mb-3">
+        <div class="col-12">
+            <div class="card p-3" style="background-color:#d1e7dd;">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-chat-left-text fs-2 me-3 text-success"></i>
+                    <div>
+                        <h5 class="card-title">{{ review.book.title }} by {{ review.book.author }}</h5>
+                        <p class="card-text">{{ review.reviews }}</p>
+                        <small class="text-muted">
+                            Posted by
+                            {% if review.posted_by %}{{ review.posted_by.username }}{% else %}Anonymous{% endif %}
+                            on {{ review.date_reviews|date:"F j, Y, H:i" }}
+                        </small>
                     </div>
                 </div>
             </div>
-        {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
     {% else %}
-        <p class="text-center text-muted fs-5">There are no reviews for the moment.</p>
+    <p class="text-center text-muted fs-5">There are no reviews for the moment.</p>
     {% endif %}
 
 </div>
