@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .forms import AddReviewsForm
+from .forms import AddReviewsForm, AddBooksForm
 from .models import Category,Book,Reviews
 # Create your views here.
 
@@ -29,7 +29,20 @@ def book_reviews_form(request):
     else:
         form=AddReviewsForm()
 
-    books=Book.objects.all().order_by('title')
     return render(request, 'book/add_review_form.html',
-                  {'books': books, 'form':form })
+                  {'form':form })
+
+
+def add_books_form(request):
+    if request.method=="POST":
+        form=AddBooksForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"You added a book successfully")
+            return redirect('book:add_book')
+    else:
+        form=AddBooksForm()
+
+    return render(request,'book/add_book_form.html',{'form':form})
+
 

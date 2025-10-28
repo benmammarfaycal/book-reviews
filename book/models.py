@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class Book(models.Model):
     title=models.CharField(max_length=100)
     author=models.CharField(max_length=100)
-    publication_date=models.DateField()
+    publication_date=models.DateField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     isbn = models.CharField(max_length=20, blank=True, null=True)
     category=models.ForeignKey('Category',on_delete=models.CASCADE)
