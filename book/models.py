@@ -24,7 +24,7 @@ class Category(models.Model):
 
 class Reviews(models.Model):
     reviews=models.TextField()
-    date_reviews=models.DateTimeField()
+    date_reviews=models.DateTimeField(auto_now_add=True)
     book=models.ForeignKey('Book',on_delete=models.CASCADE)
     posted_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 

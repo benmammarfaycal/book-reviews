@@ -32,6 +32,7 @@
 </nav>
 
 <div class="container py-5">
+    <a href="{% url 'book:add_review' %}" class="btn btn-primary">add a review</a>
     <h1 class="mb-4 text-center">Latest Reviews</h1>
 
     {% if last_reviews %}
