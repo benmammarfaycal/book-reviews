@@ -63,6 +63,8 @@ class Category(models.Model):
         }
         return icons.get(self.name, "bi-card-text")
 
+    def total_reviews_count(self):
+        return Reviews.objects.filter(book__category=self).count()
 
     def __str__(self):
         return self.name
