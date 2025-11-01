@@ -5,7 +5,7 @@
     <title>BookStore - Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-     <link rel="stylesheet" href="{% static 'book/style.css' %}">
+    <link rel="stylesheet" href="{% static 'book/style.css' %}">
     <style>
         .hero-header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -54,9 +54,30 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
+        .alert-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1050;
+            min-width: 300px;
+        }
     </style>
 </head>
 <body class="bg-light">
+
+<!-- Messages Flash -->
+{% if messages %}
+<div class="alert-container">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'warning' %}warning{% elif message.tags == 'success' %}success{% else %}info{% endif %} alert-dismissible fade show shadow"
+         role="alert">
+        <i class="bi bi-{% if message.tags == 'warning' %}exclamation-triangle{% elif message.tags == 'success' %}check-circle{% else %}info-circle{% endif %} me-2"></i>
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
     <div class="container">
@@ -90,6 +111,41 @@
                         <i class="bi bi-envelope"></i> Contact Me
                     </a>
                 </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-fill me-1"></i> {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'book:profile' %}">
+                                <i class="bi bi-person-circle me-2"></i>
+                                <span>Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form action="{% url 'book:logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="dropdown-item d-flex align-items-center text-danger bg-transparent border-0 w-100">
+                                    <i class="bi bi-box-arrow-right me-2"></i>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'book:login' %}">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -105,6 +161,18 @@
             <div class="col-md-10">
                 <h1 class="display-4 fw-bold">Welcome to BookStore</h1>
                 <p class="lead mb-0">Discover, share, and explore amazing books with our community</p>
+                {% if not user.is_authenticated %}
+                <div class="mt-3">
+                    <small>
+                        <i class="bi bi-info-circle"></i>
+                        <a href="{% url 'book:login' %}" class="text-white text-decoration-underline">Login</a>
+                        or
+                        <a href="{% url 'book:register' %}" class="text-white text-decoration-underline">create an
+                            account</a>
+                        to add books and reviews
+                    </small>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -204,7 +272,8 @@
                                     <p class="card-text text-muted mb-0">
                                         <i class="bi bi-person"></i> by {{ review.book.author }}
                                     </p>
-                                    <span class="badge" style="background-color: {{ review.book.color }}; color: white;">
+                                    <span class="badge"
+                                          style="background-color: {{ review.book.color }}; color: white;">
                                         {{ review.book.category.name }}
                                     </span>
                                 </div>
@@ -218,9 +287,9 @@
                                 <small class="text-muted">
                                     <i class="bi bi-person-circle"></i>
                                     {% if review.posted_by %}
-                                        {{ review.posted_by.username }}
+                                    {{ review.posted_by.username }}
                                     {% else %}
-                                        Anonymous
+                                    Anonymous
                                     {% endif %}
                                 </small>
                                 <small class="text-muted">
@@ -308,6 +377,17 @@
     document.getElementById('backToTop').addEventListener('click', function(e) {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Auto-dismiss alerts after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
     });
 </script>
 </body>

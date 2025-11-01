@@ -1,5 +1,7 @@
 from django import forms
 from .models import Reviews, Book
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+
 
 class AddReviewsForm(forms.ModelForm):
     class Meta:
@@ -41,3 +43,17 @@ class AddBooksForm(forms.ModelForm):
             "isbn": forms.TextInput(attrs={"class": "form-control", "placeholder": "ISBN"}),
             "category": forms.Select(attrs={"class": "form-control"}),
         }
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Username'})
+        self.fields['password'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Password'})
+
+class CustomUserCreationForm(UserCreationForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Username'})
+        self.fields['password1'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Password'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control', 'placeholder': 'Confirm Password'})
