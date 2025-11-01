@@ -1,0 +1,466 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user_profile.username }} - Profile - BookStore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 20px 20px;
+            color: white;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            border: 4px solid white;
+        }
+        .profile-avatar i {
+            font-size: 3rem;
+            color: white;
+        }
+        .stats-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .review-card {
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s ease;
+        }
+        .review-card:hover {
+            transform: translateX(5px);
+        }
+        .book-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .empty-state {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #6c757d;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: #495057;
+            font-weight: 500;
+            padding: 1rem 1.5rem;
+        }
+        .nav-tabs .nav-link.active {
+            border-bottom: 3px solid #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+        .badge-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .activity-timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        .activity-timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e9ecef;
+        }
+        .activity-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            left: -2.3rem;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #667eea;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'book:index' %}">
+            <i class="bi bi-book-half"></i> BookStore
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'book:index' %}">
+                        <i class="bi bi-house"></i> Main
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'book:books' %}">
+                        <i class="bi bi-book"></i> Books
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'book:categories' %}">
+                        <i class="bi bi-tags"></i> Categories
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'contact:index' %}">
+                        <i class="bi bi-envelope"></i> Contact Me
+                    </a>
+                </li>
+                {% if user.is_authenticated %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center active" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-fill me-1"></i> {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{% url 'book:profile' %}">
+                                <i class="bi bi-person-circle me-2"></i>
+                                <span>Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="#">
+                                <i class="bi bi-gear me-2"></i>
+                                <span>Settings</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form action="{% url 'book:logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="dropdown-item d-flex align-items-center text-danger bg-transparent border-0 w-100">
+                                    <i class="bi bi-box-arrow-right me-2"></i>
+                                    <span>Logout</span>
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" href="{% url 'book:login' %}">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Profile Header -->
+<div class="profile-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center">
+                <div class="profile-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h1 class="display-5 fw-bold">{{ user_profile.username }}</h1>
+                <p class="lead mb-2">BookStore Community Member</p>
+                <div class="d-flex gap-3">
+                    <span class="badge badge-custom rounded-pill">
+                        <i class="bi bi-calendar me-1"></i>
+                        Joined {{ user_profile.date_joined|date:"F Y" }}
+                    </span>
+                    <span class="badge bg-light text-dark rounded-pill">
+                        <i class="bi bi-award me-1"></i>
+                        Reader Level
+                        {% if total_reviews > 20 %}Expert
+                        {% elif total_reviews > 10 %}Advanced
+                        {% elif total_reviews > 5 %}Intermediate
+                        {% else %}Beginner
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Stats Section -->
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <i class="bi bi-chat-quote fs-1 text-primary mb-2"></i>
+                    <h3 class="card-title">{{ total_reviews }}</h3>
+                    <p class="card-text mb-0">Reviews Written</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <i class="bi bi-book fs-1 text-success mb-2"></i>
+                    <h3 class="card-title">{{ total_books_added }}</h3>
+                    <p class="card-text mb-0">Books Added</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card stats-card text-center">
+                <div class="card-body">
+                    <i class="bi bi-clock-history fs-1 text-info mb-2"></i>
+                    <h3 class="card-title">{{ user_profile.date_joined|timesince }}</h3>
+                    <p class="card-text mb-0">Community Member</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">
+                <i class="bi bi-chat-text me-2"></i>My Reviews
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="books-tab" data-bs-toggle="tab" data-bs-target="#books" type="button" role="tab">
+                <i class="bi bi-book me-2"></i>My Books
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab">
+                <i class="bi bi-activity me-2"></i>Recent Activity
+            </button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="profileTabsContent">
+        <!-- Reviews Tab -->
+        <div class="tab-pane fade show active" id="reviews" role="tabpanel">
+            {% if user_reviews %}
+            <div class="row g-4">
+                {% for review in user_reviews %}
+                <div class="col-12">
+                    <div class="card review-card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <h5 class="card-title mb-0">
+                                    <a href="{% url 'book:book_infos' review.book.id %}" class="text-decoration-none text-dark">
+                                        {{ review.book.title }}
+                                    </a>
+                                </h5>
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i>
+                                    {{ review.date_reviews|date:"M j, Y" }}
+                                </small>
+                            </div>
+                            <p class="card-text text-muted mb-2">
+                                <i class="bi bi-person"></i> by {{ review.book.author }}
+                                <span class="badge ms-2" style="background-color: {{ review.book.color }}; color: white;">
+                                    {{ review.book.category.name }}
+                                </span>
+                            </p>
+                            <p class="card-text mb-0">{{ review.reviews }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-chat-square-text" style="font-size: 4rem;"></i>
+                <h3>No Reviews Yet</h3>
+                <p class="lead mb-4">You haven't written any reviews yet. Share your thoughts on books you've read!</p>
+                <a href="{% url 'book:add_review' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> Write Your First Review
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Books Tab -->
+        <div class="tab-pane fade" id="books" role="tabpanel">
+            {% if user_books %}
+            <div class="row g-4">
+                {% for book in user_books %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="card book-card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ book.title }}</h5>
+                            <p class="card-text text-muted">
+                                <i class="bi bi-person"></i> {{ book.author }}
+                            </p>
+                            {% if book.publication_date %}
+                            <p class="card-text text-muted">
+                                <i class="bi bi-calendar"></i> {{ book.publication_date|date:"Y" }}
+                            </p>
+                            {% endif %}
+                            <span class="badge" style="background-color: {{ book.color }}; color: white;">
+                                {{ book.category.name }}
+                            </span>
+                            <div class="mt-3">
+                                <a href="{% url 'book:book_infos' book.id %}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-eye"></i> View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <i class="bi bi-book" style="font-size: 4rem;"></i>
+                <h3>No Books Added</h3>
+                <p class="lead mb-4">You haven't added any books to our collection yet.</p>
+                <a href="{% url 'book:add_book' %}" class="btn btn-success btn-lg">
+                    <i class="bi bi-plus-circle"></i> Add Your First Book
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Activity Tab -->
+        <div class="tab-pane fade" id="activity" role="tabpanel">
+            <div class="activity-timeline">
+                {% if user_reviews or user_books %}
+                    {% for review in user_reviews|slice:":10" %}
+                    <div class="activity-item">
+                        <div class="card shadow-sm mb-3">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-chat-text-fill text-primary me-2"></i>
+                                    <strong>You reviewed a book</strong>
+                                    <small class="text-muted ms-auto">{{ review.date_reviews|date:"M j, Y" }}</small>
+                                </div>
+                                <p class="mb-1">
+                                    <a href="{% url 'book:book_infos' review.book.id %}" class="text-decoration-none">
+                                        {{ review.book.title }}
+                                    </a>
+                                </p>
+                                <p class="text-muted small mb-0">{{ review.reviews|truncatewords:20 }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% for book in user_books|slice:":5" %}
+                    <div class="activity-item">
+                        <div class="card shadow-sm mb-3">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-book-fill text-success me-2"></i>
+                                    <strong>You added a book</strong>
+                                    <small class="text-muted ms-auto">{{ book.added_by.date_joined|date:"M j, Y" }}</small>
+                                </div>
+                                <p class="mb-0">
+                                    <a href="{% url 'book:book_infos' book.id %}" class="text-decoration-none">
+                                        {{ book.title }} by {{ book.author }}
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-activity" style="font-size: 4rem;"></i>
+                    <h3>No Activity Yet</h3>
+                    <p class="lead mb-4">Start interacting with the community to see your activity here!</p>
+                    <div class="d-flex gap-3 justify-content-center">
+                        <a href="{% url 'book:add_review' %}" class="btn btn-primary">
+                            <i class="bi bi-chat-text"></i> Write a Review
+                        </a>
+                        <a href="{% url 'book:add_book' %}" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> Add a Book
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card bg-light border-0">
+                <div class="card-body text-center py-4">
+                    <h4 class="card-title mb-3">
+                        <i class="bi bi-lightning"></i> Quick Actions
+                    </h4>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap">
+                        <a href="{% url 'book:add_review' %}" class="btn btn-primary">
+                            <i class="bi bi-chat-text"></i> Write Review
+                        </a>
+                        <a href="{% url 'book:add_book' %}" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> Add Book
+                        </a>
+                        <a href="{% url 'book:books' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-search"></i> Browse Books
+                        </a>
+                        <a href="{% url 'book:index' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-house"></i> Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-light mt-5 py-4">
+    <div class="container text-center">
+        <p class="text-muted mb-0">
+            &copy; 2024 BookStore.
+            <span class="text-primary">{{ user_profile.username }}</span>'s profile
+        </p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Activer les tooltips Bootstrap
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+</body>
+</html>
